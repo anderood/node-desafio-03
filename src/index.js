@@ -34,9 +34,7 @@ function checkById(request, response, next){
   }else{
     return response.status(400).json( { error: "ID Não Encontrado"})
   }
-
   next();
-
 }
 
 app.post('/users', checkExistAccount, (request, response) => {
