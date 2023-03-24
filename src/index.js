@@ -9,7 +9,7 @@ app.use(express.json());
 const repositories = [];
 const users = [];
 
-app.post('/users', (request, response) => {
+function checkExistAccount(request, response, next){
   const { name, username } = request.body;
 
   const checkUsername = users.find(item => item.username === username);
@@ -17,6 +17,16 @@ app.post('/users', (request, response) => {
   if(checkUsername){
     return response.status(400).json({ error: "Usuario ja cadastrado"})
   }
+
+  request.name = name;
+  request.username = username;
+
+  next();
+}
+
+app.post('/users', checkExistAccount, (request, response) => {
+  
+  const { name, username } = request;
 
   const newUser = {
     id: uuid(),
