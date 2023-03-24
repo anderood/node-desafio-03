@@ -7,6 +7,42 @@ const app = express();
 app.use(express.json());
 
 const repositories = [];
+const users = [];
+
+app.post('/users', (request, response) => {
+  const { name, username } = request.body;
+
+  const checkUsername = users.find(item => item.username === username);
+
+  if(checkUsername){
+    return response.status(400).json({ error: "Usuario ja cadastrado"})
+  }
+
+  const newUser = {
+    id: uuid(),
+    name: name,
+    username: username,
+    created_at: new Date(),
+    repositories: []
+  }
+
+  users.push(newUser);
+
+  return response.status(201).json(newUser);
+
+});
+
+app.get("/users/:id", (request, response) => {
+  const { id } = request.params;
+
+  const checkID = users.find(item => item.id === id);
+
+  if(!checkID){
+    return response.status(400).json( { error: "ID Não Encontrado"})
+  }
+
+  return response.status(200).json( checkID )
+});
 
 app.get("/repositories", (request, response) => {
   return response.json(repositories);
