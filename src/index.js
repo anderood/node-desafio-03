@@ -24,6 +24,21 @@ function checkExistAccount(request, response, next){
   next();
 }
 
+function checkById(request, response, next){
+  const { id } = request.params;
+
+  const userid = users.find(item => item.id === id);
+
+  if(userid){
+    request.userid = userid;
+  }else{
+    return response.status(400).json( { error: "ID Não Encontrado"})
+  }
+
+  next();
+
+}
+
 app.post('/users', checkExistAccount, (request, response) => {
   
   const { name, username } = request;
@@ -42,16 +57,11 @@ app.post('/users', checkExistAccount, (request, response) => {
 
 });
 
-app.get("/users/:id", (request, response) => {
-  const { id } = request.params;
+app.get("/users/:id", checkById, (request, response) => {
+  
+  const { userid } = request;
 
-  const checkID = users.find(item => item.id === id);
-
-  if(!checkID){
-    return response.status(400).json( { error: "ID Não Encontrado"})
-  }
-
-  return response.status(200).json( checkID )
+  return response.status(200).json( userid )
 });
 
 app.get("/repositories", (request, response) => {
